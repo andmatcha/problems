@@ -127,7 +127,6 @@ const main = ((startPoint: string) => {
     const time = calcTime(resultRoute);
     output.push({ route: route, time: `${time}分` });
   }
-  console.log(output);
 
-  return;
+  console.log(output);
 })("A");
