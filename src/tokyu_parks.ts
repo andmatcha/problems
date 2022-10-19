@@ -53,7 +53,7 @@ const judgeCanReturn = (route: string[]): boolean => {
   return false;
 };
 
-// 既存の経路の配列を渡すと考えうる次の地点を追加した経路の配列を返す
+// 起点を[["A"]]のように渡すと、再帰的に全ての最短経路を配列で返す
 const describeRoutes = (routes: string[][]): string[][] => {
   const newRoutes: string[][] = [];
   for (let route of routes) {
