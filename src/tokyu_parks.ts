@@ -34,8 +34,27 @@ type Output = {
   time: string;
 }[];
 
+// arrに含まれる要素がtargetに全て含まれていたらtrue, それ以外はfalse
+const isAllIncludes = (
+  arr: (string | number)[],
+  target: (string | number)[]
+): boolean => arr.every((el) => target.includes(el));
+
+// 渡した経路が初期地点に直接帰ることができるか判定
+const judgeCanReturn = (route: string[]): boolean => {
+  const startPoint = route[0];
+  const endPoint = route[route.length - 1];
+  for (let row of DATA) {
+    if (isAllIncludes([startPoint, endPoint], row.route)) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 // 既存の経路の配列を渡すと考えうる次の地点を追加した経路の配列を返す
-const connectRoutes = (routes: string[][]): string[][] => {
+const describeRoutes = (routes: string[][]): string[][] => {
   const newRoutes: string[][] = [];
   for (let route of routes) {
     // 現状の経路の最終地点
@@ -67,26 +86,7 @@ const connectRoutes = (routes: string[][]): string[][] => {
     return result;
   }
 
-  return connectRoutes(newRoutes);
-};
-
-// arrに含まれる要素がtargetに全て含まれていたらtrue, それ以外はfalse
-const isAllIncludes = (
-  arr: (string | number)[],
-  target: (string | number)[]
-): boolean => arr.every((el) => target.includes(el));
-
-// 渡した経路が初期地点に直接帰ることができるか判定
-const judgeCanReturn = (route: string[]): boolean => {
-  const startPoint = route[0];
-  const endPoint = route[route.length - 1];
-  for (let row of DATA) {
-    if (isAllIncludes([startPoint, endPoint], row.route)) {
-      return true;
-    }
-  }
-
-  return false;
+  return describeRoutes(newRoutes);
 };
 
 // アルファベットの配列を公園名の配列に変換
@@ -116,9 +116,9 @@ const calcTime = (route: string[]): number => {
   return time;
 };
 
-const main = (startPoint: string) => {
+const main = ((startPoint: string) => {
   // 考えうる経路
-  let resultRoutes = connectRoutes([[startPoint]]);
+  let resultRoutes = describeRoutes([[startPoint]]);
 
   // 整形して出力
   let output: Output = [];
@@ -130,6 +130,4 @@ const main = (startPoint: string) => {
   console.log(output);
 
   return;
-};
-
-main("A");
+})("A");
