@@ -57,27 +57,28 @@ const judgeCanReturn = (route: string[]): boolean => {
 const describeRoutes = (routes: string[][]): string[][] => {
   const newRoutes: string[][] = [];
   for (let route of routes) {
-    // 現状の経路の最終地点
+    // 現状の経路の終点
     const routeEnd = route[route.length - 1];
+    // 次の経路を見つける
     for (let row of DATA) {
-      // 新しい経路を見つける
+      // 現状の経路の終点を含まない経路を除外
       if (!row.route.includes(routeEnd)) {
         continue;
       }
-      // 次の地点
+      // 次に到達しうる地点
       const newPoint = row.route.find((point) => point !== routeEnd) ?? null;
-      // すでに一回通っていたらダメ
+      // すでに一回通っていたら除外
       if (newPoint === null || route.includes(newPoint)) {
         continue;
       }
-      // 条件をクリアした経路を登録
+      // 条件を満たす経路を保持
       newRoutes.push([...route, newPoint]);
     }
   }
 
   // 全ての公園を巡り尽くしたとき
   if (newRoutes.length === 0) {
-    // 直接起点に戻れる経路のみを絞り込み
+    // 直接起点に戻れる経路のみを絞り込む
     const result = routes.filter((route) => judgeCanReturn(route));
     // 終点を追加
     for (let route of result) {
@@ -89,7 +90,7 @@ const describeRoutes = (routes: string[][]): string[][] => {
   return describeRoutes(newRoutes);
 };
 
-// アルファベットの配列を公園名の配列に変換
+// アルファベットの経路配列を公園名の経路配列に変換
 const replaceSymbolWithParkName = (symbolArray: string[]) => {
   const parkNameArray: string[] = [];
   for (let symbol of symbolArray) {
@@ -117,7 +118,7 @@ const calcTime = (route: string[]): number => {
 };
 
 const main = ((startPoint: string) => {
-  // 考えうる経路
+  // 考えうる最短経路たちの配列
   let resultRoutes = describeRoutes([[startPoint]]);
 
   // 整形して出力
