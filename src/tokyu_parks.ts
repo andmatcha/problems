@@ -30,7 +30,7 @@ const DATA = [
 ];
 
 type Output = {
-  route: string;
+  route: string[];
   time: string;
 }[];
 
@@ -118,11 +118,11 @@ const main = (startPoint: string) => {
   }
 
   // 整形して出力
-  let output: {}[] = [];
+  let output: Output = [];
   for (let i = 0; i < resultRoutes.length; i++) {
     const route = replaceSymbolWithParkName(resultRoutes[i]);
     const time = calcTime(resultRoutes[i]);
-    output.push({ 道順: route, 所要時間: `${time}分` });
+    output.push({ route: route, time: `${time}分` });
   }
   console.log(output);
 
