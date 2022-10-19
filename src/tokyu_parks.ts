@@ -37,32 +37,33 @@ type Output = {
 // 既存の経路の配列を渡すと考えうる次の地点を追加した経路の配列を返す
 const connectRoutes = (routes: string[][]): string[][] => {
   const newRoutes: string[][] = [];
-  routes.forEach((route) => {
+  for (let route of routes) {
     // 現状の経路の最終地点
     const routeEnd = route[route.length - 1];
-    DATA.forEach((row) => {
+    for (let row of DATA) {
       // 新しい経路を見つける
-      if (row.route.includes(routeEnd)) {
-        // 次の地点
-        const newPoint = row.route.find((point) => point !== routeEnd) ?? null;
-        // すでに一回通っていたらダメ
-        if (newPoint !== null && !route.includes(newPoint)) {
-          // 条件をクリアした経路を登録
-          newRoutes.push([...route, newPoint]);
-        }
+      if (!row.route.includes(routeEnd)) {
+        continue;
       }
-    });
-  });
+      // 次の地点
+      const newPoint = row.route.find((point) => point !== routeEnd) ?? null;
+      // すでに一回通っていたらダメ
+      if (newPoint === null || route.includes(newPoint)) {
+        continue;
+      }
+      // 条件をクリアした経路を登録
+      newRoutes.push([...route, newPoint]);
+    }
+  }
 
   // 全ての公園を巡り尽くしたとき
   if (newRoutes.length === 0) {
     // 直接起点に戻れる経路のみを絞り込み
     const result = routes.filter((route) => judgeCanReturn(route));
     // 終点を追加
-    result.forEach((route) => {
+    for (let route of result) {
       route.push(route[0]);
-    });
-
+    }
     return result;
   }
 
@@ -91,12 +92,12 @@ const judgeCanReturn = (route: string[]): boolean => {
 // アルファベットの配列を公園名の配列に変換
 const replaceSymbolWithParkName = (symbolArray: string[]) => {
   const parkNameArray: string[] = [];
-  symbolArray.forEach((symbol) => {
+  for (let symbol of symbolArray) {
     const park = PARKS.find((park) => park.symbol === symbol) ?? null;
     if (park) {
       parkNameArray.push(park.name);
     }
-  });
+  }
 
   return parkNameArray;
 };
@@ -121,11 +122,11 @@ const main = (startPoint: string) => {
 
   // 整形して出力
   let output: Output = [];
-  resultRoutes.forEach((resultRoute) => {
+  for (let resultRoute of resultRoutes) {
     const route = replaceSymbolWithParkName(resultRoute);
     const time = calcTime(resultRoute);
     output.push({ route: route, time: `${time}分` });
-  });
+  }
   console.log(output);
 
   return;
