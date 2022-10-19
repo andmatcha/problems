@@ -37,26 +37,35 @@ type Output = {
 // 既存の経路の配列を渡すと考えうる次の地点を追加した経路の配列を返す
 const connectRoutes = (routes: string[][]): string[][] => {
   const newRoutes: string[][] = [];
-  routes.forEach((route) => {
+  for (let i = 0; i < routes.length; i++) {
     // 現状の経路の最終地点
-    const routeEnd = route[route.length - 1];
-    DATA.forEach((dataItem) => {
+    const routeEnd = routes[i][routes[i].length - 1];
+    for (let j = 0; j < DATA.length; j++) {
       // 新しい経路を見つける
-      if (dataItem.route.includes(routeEnd)) {
+      if (DATA[j].route.includes(routeEnd)) {
         // 次の地点
         const newPoint =
-          dataItem.route.find((point) => point !== routeEnd) ?? null;
+          DATA[j].route.find((point) => point !== routeEnd) ?? null;
         // すでに一回通っていたらダメ
-        if (newPoint !== null && !route.includes(newPoint)) {
+        if (newPoint !== null && !routes[i].includes(newPoint)) {
           // 条件をクリアした経路を登録
-          newRoutes.push([...route, newPoint]);
+          newRoutes.push([...routes[i], newPoint]);
         }
       }
-    });
-  });
+    }
+  }
 
+  // 全ての公園を巡り尽くしたとき
   if (newRoutes.length === 0) {
-    return routes.filter((route) => judgeCanReturn(route));
+    // 直接起点に戻れる経路のみを絞り込み
+    routes = routes.filter((route) => judgeCanReturn(route));
+
+    // 終点を追加
+    for (let i = 0; i < routes.length; i++) {
+      routes[i].push(routes[i][0]);
+    }
+
+    return routes;
   }
 
   return connectRoutes(newRoutes);
@@ -111,11 +120,6 @@ const calcTime = (route: string[]): number => {
 const main = (startPoint: string) => {
   // 考えうる経路
   let resultRoutes = connectRoutes([[startPoint]]);
-
-  // 終点を追加
-  for (let i = 0; i < resultRoutes.length; i++) {
-    resultRoutes[i].push(resultRoutes[i][0]);
-  }
 
   // 整形して出力
   let output: Output = [];
