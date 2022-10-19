@@ -57,13 +57,13 @@ const connectRoutes = (routes: string[][]): string[][] => {
   // 全ての公園を巡り尽くしたとき
   if (newRoutes.length === 0) {
     // 直接起点に戻れる経路のみを絞り込み
-    routes = routes.filter((route) => judgeCanReturn(route));
+    const result = routes.filter((route) => judgeCanReturn(route));
     // 終点を追加
-    routes.forEach((route) => {
+    result.forEach((route) => {
       route.push(route[0]);
     });
 
-    return routes;
+    return result;
   }
 
   return connectRoutes(newRoutes);
@@ -76,14 +76,14 @@ const isAllIncludes = (
 ): boolean => arr.every((el) => target.includes(el));
 
 // 渡した経路が初期地点に直接帰ることができるか判定
-const judgeCanReturn = (route: string[]) => {
+const judgeCanReturn = (route: string[]): boolean => {
   const startPoint = route[0];
   const endPoint = route[route.length - 1];
-  DATA.forEach((row) => {
+  for (let row of DATA) {
     if (isAllIncludes([startPoint, endPoint], row.route)) {
       return true;
     }
-  });
+  }
 
   return false;
 };
