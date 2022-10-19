@@ -37,33 +37,31 @@ type Output = {
 // 既存の経路の配列を渡すと考えうる次の地点を追加した経路の配列を返す
 const connectRoutes = (routes: string[][]): string[][] => {
   const newRoutes: string[][] = [];
-  for (let i = 0; i < routes.length; i++) {
+  routes.forEach((route) => {
     // 現状の経路の最終地点
-    const routeEnd = routes[i][routes[i].length - 1];
-    for (let j = 0; j < DATA.length; j++) {
+    const routeEnd = route[route.length - 1];
+    DATA.forEach((row) => {
       // 新しい経路を見つける
-      if (DATA[j].route.includes(routeEnd)) {
+      if (row.route.includes(routeEnd)) {
         // 次の地点
-        const newPoint =
-          DATA[j].route.find((point) => point !== routeEnd) ?? null;
+        const newPoint = row.route.find((point) => point !== routeEnd) ?? null;
         // すでに一回通っていたらダメ
-        if (newPoint !== null && !routes[i].includes(newPoint)) {
+        if (newPoint !== null && !route.includes(newPoint)) {
           // 条件をクリアした経路を登録
-          newRoutes.push([...routes[i], newPoint]);
+          newRoutes.push([...route, newPoint]);
         }
       }
-    }
-  }
+    });
+  });
 
   // 全ての公園を巡り尽くしたとき
   if (newRoutes.length === 0) {
     // 直接起点に戻れる経路のみを絞り込み
     routes = routes.filter((route) => judgeCanReturn(route));
-
     // 終点を追加
-    for (let i = 0; i < routes.length; i++) {
-      routes[i].push(routes[i][0]);
-    }
+    routes.forEach((route) => {
+      route.push(route[0]);
+    });
 
     return routes;
   }
@@ -81,11 +79,11 @@ const isAllIncludes = (
 const judgeCanReturn = (route: string[]) => {
   const startPoint = route[0];
   const endPoint = route[route.length - 1];
-  for (let i = 0; i < DATA.length; i++) {
-    if (isAllIncludes([startPoint, endPoint], DATA[i].route)) {
+  DATA.forEach((row) => {
+    if (isAllIncludes([startPoint, endPoint], row.route)) {
       return true;
     }
-  }
+  });
 
   return false;
 };
@@ -123,11 +121,11 @@ const main = (startPoint: string) => {
 
   // 整形して出力
   let output: Output = [];
-  for (let i = 0; i < resultRoutes.length; i++) {
-    const route = replaceSymbolWithParkName(resultRoutes[i]);
-    const time = calcTime(resultRoutes[i]);
+  resultRoutes.forEach((resultRoute) => {
+    const route = replaceSymbolWithParkName(resultRoute);
+    const time = calcTime(resultRoute);
     output.push({ route: route, time: `${time}分` });
-  }
+  });
   console.log(output);
 
   return;
